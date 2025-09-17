@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Notification UI with Toast</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body class="bg-gray-100 min-h-screen">
+
+    <!-- Navbar -->
+    <nav class="bg-white shadow-md px-6 py-4 flex justify-between items-center sticky top-0 z-50">
+        <h1 class="text-2xl font-bold text-gray-800">MyApp</h1>
+
+        <!-- Right Side -->
+        <div class="flex items-center space-x-6">
+
+            <!-- User Avatar -->
+            <img class="h-10 w-10 rounded-full border border-gray-300" src="https://i.pravatar.cc/100?img=12"
+                alt="user">
+
+            <!-- Notification Bell -->
+            <div class="relative">
+                <button id="notifBtn" class="relative p-2 rounded-full hover:bg-gray-100 transition">
+                    <!-- Bell Icon -->
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7 text-gray-700" fill="none"
+                        viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6 6 0 10-12 0v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
+                    </svg>
+                    <!-- Red Badge -->
+                    <span
+                        class="absolute top-2 right-2 block h-2.5 w-2.5 rounded-full bg-red-500 ring-2 ring-white animate-ping"></span>
+                    <span
+                        class="absolute top-2 right-2 block h-2.5 w-2.5 rounded-full bg-red-500 ring-2 ring-white"></span>
+                </button>
+
+                <!-- Dropdown -->
+                <div id="notifDropdown"
+                    class="hidden absolute right-0 mt-3 w-80 sm:w-96 bg-white rounded-2xl shadow-2xl border border-gray-100 z-50 overflow-hidden">
+
+                    <!-- Header -->
+                    <div class="p-4 border-b bg-gray-50 flex justify-between items-center">
+                        <span class="font-semibold text-gray-700">Notifications</span>
+                        <button class="text-xs text-blue-600 hover:underline" onclick="markAllRead()">Mark all as
+                            read</button>
+                    </div>
+
+                    <!-- Notifications List -->
+                    <ul id="notifList" class="max-h-80 overflow-y-auto divide-y divide-gray-100">
+
+                        <!-- Item Example -->
+                        <li class="px-4 py-3 hover:bg-gray-50 cursor-pointer flex items-start space-x-3 transition">
+                            <img class="h-10 w-10 rounded-full" src="https://i.pravatar.cc/100?img=3" alt="user">
+                            <div class="flex-1">
+                                <p class="text-sm text-gray-700"><span class="font-medium">John Doe</span> commented on
+                                    your post
+                                </p>
+                                <span class="text-xs text-gray-400">2 mins ago</span>
+                            </div>
+                        </li>
+
+                    </ul>
+
+                    <!-- Footer -->
+                    <div class="p-3 border-t text-center bg-gray-50">
+                        <a href="#" class="text-sm text-blue-600 hover:underline">View all notifications</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Dummy content -->
+    <div class="p-6 space-y-6">
+        <p class="text-gray-600">Scroll down to check sticky navbar with notification dropdown...</p>
+        <div class="h-[1200px] bg-gradient-to-b from-gray-100 to-gray-200 rounded-xl"></div>
+        <button onclick="addToast('This is a success toast!', 'success')"
+            class="px-4 py-2 bg-green-600 text-white rounded-lg shadow hover:bg-green-700">
+            Trigger Toast
+        </button>
+    </div>
+
+    <!-- Toast Containers -->
+    <div id="toast-top-right" class="fixed top-4 right-4 space-y-3 z-50"></div>
+
+    <script>
+        // Dropdown toggle
+        const btn = document.getElementById("notifBtn");
+        const dropdown = document.getElementById("notifDropdown");
+
+        btn.addEventListener("click", () => {
+            dropdown.classList.toggle("hidden");
+        });
+
+        window.addEventListener("click", (e) => {
+            if (!btn.contains(e.target) && !dropdown.contains(e.target)) {
+                dropdown.classList.add("hidden");
+            }
+        });
+
+        function markAllRead() {
+            document.querySelectorAll('#notifList li').forEach(li => li.remove());
+            addToast('All notifications marked as read', 'info');
+        }
+
+        // Toast function
+        function addToast(message, type = 'info', duration = 4000) {
+            const colors = {
+                success: "bg-green-500",
+                error: "bg-red-500",
+                warning: "bg-yellow-400 text-gray-900",
+                info: "bg-blue-500"
+            };
+            const icons = {
+                success: '<svg class="h-6 w-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>',
+                error: '<svg class="h-6 w-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>',
+                warning: '<svg class="h-6 w-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01M12 7a9 9 0 110 18 9 9 0 010-18z"/></svg>',
+                info: '<svg class="h-6 w-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>'
+            };
+
+            const container = document.getElementById("toast-top-right");
+
+            const toast = document.createElement("div");
+            toast.className = `flex items-start w-72 sm:w-80 p-4 rounded-lg shadow-lg text-white ${colors[type]} animate-slide-in`;
+            toast.innerHTML = `
+        <div class="flex-shrink-0 mr-3">${icons[type]}</div>
+        <div class="flex-1 text-sm">${message}</div>
+        <button class="ml-3 text-xl leading-none">&times;</button>
+      `;
+
+            // Close button
+            toast.querySelector("button").addEventListener("click", () => {
+                toast.classList.add("animate-slide-out");
+                setTimeout(() => toast.remove(), 300);
+            });
+
+            container.appendChild(toast);
+
+            // Auto remove
+            setTimeout(() => {
+                if (toast.parentElement) {
+                    toast.classList.add("animate-slide-out");
+                    setTimeout(() => toast.remove(), 300);
+                }
+            }, duration);
+        }
+    </script>
+
+    <style>
+        @keyframes slide-in {
+            from {
+                opacity: 0;
+                transform: translateX(100%);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        @keyframes slide-out {
+            from {
+                opacity: 1;
+                transform: translateX(0);
+            }
+
+            to {
+                opacity: 0;
+                transform: translateX(100%);
+            }
+        }
+
+        .animate-slide-in {
+            animation: slide-in 0.3s ease-out forwards;
+        }
+
+        .animate-slide-out {
+            animation: slide-out 0.3s ease-in forwards;
+        }
+    </style>
+
+</body>
+
+</html>

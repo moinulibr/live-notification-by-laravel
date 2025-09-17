@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Toast Notification</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body class="bg-gray-100 min-h-screen flex items-center justify-center">
+
+    <!-- Button to Trigger -->
+    <button id="showToast"
+        class="px-6 py-3 bg-blue-600 text-white font-medium rounded-xl shadow hover:bg-blue-700 transition">
+        Show Notification
+    </button>
+
+    <!-- Toast Container -->
+    <div id="toastContainer"
+        class="fixed bottom-4 right-4 space-y-3 sm:space-y-4 sm:right-4 w-full sm:w-96 max-w-sm z-50 px-2 sm:px-0">
+        <!-- Toasts will be injected here -->
+    </div>
+
+    <script>
+        const showToastBtn = document.getElementById("showToast");
+        const toastContainer = document.getElementById("toastContainer");
+
+        function showToast(message, type = "info") {
+            // Colors based on type
+            const colors = {
+                success: "bg-green-500",
+                error: "bg-red-500",
+                info: "bg-blue-500",
+                warning: "bg-yellow-500 text-gray-900"
+            };
+
+            // Create toast element
+            const toast = document.createElement("div");
+            toast.className = `flex items-center w-full sm:w-96 max-w-sm p-4 rounded-xl shadow-lg text-white ${colors[type]} animate-slide-in`;
+
+            toast.innerHTML = `
+        <div class="flex-shrink-0 mr-3">
+          ${type === "success"
+                    ? '<svg class="h-6 w-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>'
+                    : type === "error"
+                        ? '<svg class="h-6 w-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>'
+                        : type === "warning"
+                            ? '<svg class="h-6 w-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856C18.07 21 19 20.07 19 18.938V5.062C19 3.93 18.07 3 16.938 3H7.062C5.93 3 5 3.93 5 5.062v13.876C5 20.07 5.93 21 7.062 21z"/></svg>'
+                            : '<svg class="h-6 w-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>'
+                }
+        </div>
+        <div class="flex-1 text-sm">${message}</div>
+        <button class="ml-3 focus:outline-none">&times;</button>
+      `;
+
+            // Close button action
+            toast.querySelector("button").addEventListener("click", () => {
+                toast.classList.add("animate-slide-out");
+                setTimeout(() => toast.remove(), 300);
+            });
+
+            // Append toast
+            toastContainer.appendChild(toast);
+
+            // Auto remove after 4s
+            setTimeout(() => {
+                if (toast.parentElement) {
+                    toast.classList.add("animate-slide-out");
+                    setTimeout(() => toast.remove(), 300);
+                }
+            }, 4000);
+        }
+
+        // Example click trigger
+        showToastBtn.addEventListener("click", () => {
+            const types = ["success", "error", "info", "warning"];
+            const randomType = types[Math.floor(Math.random() * types.length)];
+            showToast(`This is a ${randomType} notification!`, randomType);
+        });
+    </script>
+
+    <style>
+        @keyframes slide-in {
+            from {
+                opacity: 0;
+                transform: translateX(100%);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        @keyframes slide-out {
+            from {
+                opacity: 1;
+                transform: translateX(0);
+            }
+
+            to {
+                opacity: 0;
+                transform: translateX(100%);
+            }
+        }
+
+        .animate-slide-in {
+            animation: slide-in 0.3s ease-out forwards;
+        }
+
+        .animate-slide-out {
+            animation: slide-out 0.3s ease-in forwards;
+        }
+    </style>
+</body>
+
+</html>
